@@ -33,6 +33,7 @@ total:number;
 
   constructor(public HomeService: HomeService) {}
    ngOnInit() {
+
     this.HomeService.getProducts().subscribe(producto =>{
       this.productoitem=producto;
      console.log(this.productoitem);

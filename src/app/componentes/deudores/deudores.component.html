@@ -5,10 +5,15 @@
 <div class="columns is-desktop botones" >
   <div class="column is-four-fifths form-group">
     <div [formGroup]="myForm">
-      <input class="input is-primary buscar inputs"
+      <input list="listacolores"
          formControlName="buscar"
-         type="text" placeholde r="Buscar Cliente en la Lista" >
-  </div>
+          class="input is-primary buscar inputs"
+          placeholder="Buscar Cliente en la Lista">
+
+        <datalist id="listacolores"  *ngFor="let nombre of namelist ">
+          <option value="{{nombre}}"  *ngFor="let nombre of namelist ">{{nombre}}</option>
+        </datalist>
+      </div>
   </div>
   <div class="column">
     <button class="button is-primary inputs"
@@ -31,9 +36,9 @@
         <th>Acciones</th>
       </tr>
     </thead>
-    <tbody *ngIf="filtroActive==null && filtroVacio==null">
+    <tbody *ngIf="filtroActive==null && filtroVacio==null"><!-- resultados iniciales -->
       <tr class="tr-body"  *ngFor="let duda of deudoritem;let i=index ">
-         <th>{{i}}</th>
+         <th>{{i+1}}</th>
          <th>{{ duda.fecha | date:'d/M/y'}}</th>
          <th>{{duda.nombre}}</th>
          <th>{{duda.descripcion}}</th>
@@ -48,13 +53,14 @@
              </label>
            </th>
          <th class="btn-acciones">
-            <i class="fas fa-edit" (click)="onEditDeuda($event,duda)"></i>
-            <i class="fas fa-money-bill-alt"(click)="onSaldarDeuda($event,duda)"></i></th>
+            <i class="fas fa-edit" (click)="onEditDeuda($event, duda)"></i>
+            <i class="fas fa-money-bill-alt"(click)="onSaldarDeuda($event,duda)"></i>
+        </th>
       </tr>
     </tbody>
-    <tbody *ngIf="filtroActive==false && filtroVacio==null">
+    <tbody *ngIf="filtroActive==false && filtroVacio==null"><!-- resultados no iniciales -->
       <tr class="tr-body"  *ngFor="let duda of deudoritemAlll;let i=index ">
-         <th>{{i}}</th>
+         <th>{{i+1}}</th>
          <th>{{ duda.fecha | date:'d/M/y'}}</th>
          <th>{{duda.nombre}}</th>
          <th>{{duda.descripcion}}</th>
@@ -73,9 +79,9 @@
             <i class="fas fa-money-bill-alt"(click)="onSaldarDeuda($event,duda)"></i></th>
       </tr>
     </tbody>
-    <tbody *ngIf="filtroActive==true && iltroVacio==null">
+    <tbody *ngIf="filtroActive==true && filtroVacio==null"><!-- resultados del filtro -->
       <tr class="tr-body"  *ngFor="let duda of deudoritemFilter;let i=index ">
-         <th>{{i}}</th>
+         <th>{{i+1}}</th>
          <th>{{ duda.fecha | date:'d/M/y'}}</th>
          <th>{{duda.nombre}}</th>
          <th>{{duda.descripcion}}</th>
@@ -94,17 +100,17 @@
             <i class="fas fa-money-bill-alt"(click)="onSaldarDeuda($event,duda)"></i></th>
       </tr>
     </tbody>
-    <tbody *ngIf="filtroVacio==true && filtroActive==false ">
-      <tr class="vacio" >
-         <th></th>
-         <th></th>
-         <th><i class="fas fa-file-excel"></i>No hay Resultados.</th>
-         <th></th>
-           <th>  </th>
-           <th class="signo"></th>
-           <th  class="celda-numero" >  </th>
-         <th class="btn-acciones"></th>
-      </tr>
+    <tbody *ngIf="filtroVacio==true && filtroActive==false "> <!-- Sin resultadot -->
+        <tr class="vacio" >
+           <th></th>
+           <th></th>
+           <th><i class="fas fa-file-excel"></i>Ningun Resultado Encontrado.</th>
+           <th></th>
+             <th>  </th>
+             <th class="signo"></th>
+             <th  class="celda-numero" >  </th>
+           <th class="btn-acciones"></th>
+        </tr>
     </tbody>
 
     <tfoot class="white-ter" *ngIf="filtroActive==null && filtroVacio==null"><!-- resultados iiciales -->
@@ -141,10 +147,11 @@
         <th></th>
         <th class="deuda-total">Deuda Total:</th>
         <th class="signo"><i class="fas fa-dollar-sign"></i></th>
-        <th class="celda-numero">{{totalDeudas}}<label *ngIf="totalDeudas % 1 == 0">.00</label><label *ngIf="totalDeudas % 1 != 0">0</label>
-        </th>
-        <th></th>
-      </tr>
+        <th class="celda-numero">{{totalDeudasResultados}}<label *ngIf="totalDeudas % 1 == 0">.00 </label><label *ngIf="totalDeudas % 1 != 0">0</label></th>
+        <th *ngIf="resultadosIguales!=true"></th> <!-- celda mostrada en caso de no ser usuarios iguales-->
+        <th class="celda-numero" *ngIf="resultadosIguales==true">
+          <i class="fas fa-money-bill-alt" (click)="onSaldarVariasDeuda($event)"></i> </th>
+            </tr>
     </tfoot>
     <tfoot class="white-ter" *ngIf="filtroVacio==true && filtroActive==false "> <!-- filtro  vacio -->
       <tr>
@@ -161,14 +168,117 @@
 
   </table>
 
-
-
-
   </div>
 
  <!--Modales ////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////7 -->
+<div *ngIf="deleVariosState" class="pupConfirmer">
+  <!--saldar varias cuentas -->
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title"> <i class="fas fa-credit-card"></i>Saldar deudas de: <label for="">   {{deudoritemFilter[0].nombre}} </label></p>
+      <button class="delete" aria-label="close" (click)="onCancel($event)"></button>
+    </header>
+      <div class="" *ngIf="cobrarTodo != true" > <!-- inicio de la tabla de productos-->
+        <section class="modal-card-body">
+          <table  class="table" >
+            <thead class="thead1">
+              <th >#</th>
+              <th id="celdaSaldoVarios">Concepto</th>
+              <th id="celdaSaldoVarios"></th>
+              <th>Cantidad</th>
+            </thead>
+            <tbody class="bodyVariosSaldos">
+              <tr class="tr-body" *ngFor="let filtro of deudoritemFilter;let y=index" >
+                <td >{{y+1}}</td>
+                <td id="celdaSaldoVarios">{{filtro.descripcion}}</td>
+                <td class="signo" id="celdaSaldoVarios"> <span><i class="fas fa-dollar-sign"></i></span> </td>
+                <td class="celda-numero" >
+                  <label *ngIf="filtro.cantidad == 0" class="datoVacio">0.00</label>
+                   <label for="" *ngIf="filtro.cantidad != 0">
+                    {{filtro.cantidad}}<label *ngIf="filtro.cantidad % 1 == 0">.00</label><label *ngIf="filtro.cantidad % 1 != 0">0</label>
+                  </label>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+                <td></td>
+                <td class="pago">Cantidad Total a Pagar:</td>
+                <td class="signo" id="celdaSaldoVarios"> <span><i class="fas fa-dollar-sign"></i></span> </td>
+                <td class="celda-numero pago"> <strong>  {{totalDeudasResultados}}<label *ngIf="totalDeudas % 1 == 0">.00 </label><label *ngIf="totalDeudas % 1 != 0">0</label></strong></td>
+            </tfoot>
+
+          </table>
+        </section>
+      </div> <!-- fin de la tabla de productos-->
+      <div class=""*ngIf="cobrarTodo == true">
+        <section class="modal-card-body">
+          <div class="field">
+            <label class="label">Deuda Total:</label>
+            <div class="control has-icons-left has-icons-right deudatotal">
+
+              <input   type="number" class="input deudatotal " disabled value="{{totalDeudasResultados}}" >
+
+              <span class="icon is-small is-left">
+                <i class="far fa-credit-card"></i>
+              </span>
+              <span class="icon is-small is-right">
+                <i class="fas fa-exclamation-triangle"></i>
+              </span>
+            </div>
+          </div>
+          <div class="field">
+              <label class="label">Efectivo Recibido:</label>
+              <div class="control has-icons-left has-icons-right">
+                <input class="input is-primary" type="number" [(ngModel)]="abono"
+                placeholder="Inserte Cantidad Recibida" value="" name="abonono">
+                <span class="icon is-small is-left"> <i class="fas fa-donate"></i> </span>
+                <span class="icon is-small is-right"> <i class="fas fa-check"></i></span>
+              </div>
+                 <div class="help is-danger" *ngIf="abono < totalDeudasResultados"><i class="fas fa-exclamation-circle"></i>Cobra una cantidad Mayor o igual al Total</div>
+             </div>
+          <div class="field">
+                <label class="label">Cambio:</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input  [(ngModel)]="resto" class="input is-info" type="number"
+                   placeholder="00"
+                   value="{{(totalDeudasResultados - abono)*(-1)}}" disabled>
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-donate"></i>
+                  </span>
+                  <span class="icon is-small is-right">
+                    <i class="fas fa-exclamation-triangle"></i>
+                  </span>
+                </div>
+              </div>
+        </section>
+      </div>
+    <footer class="modal-card-foot">
+
+      <section *ngIf="cobrarTodo == true">
+
+        <div *ngIf="abono < totalDeudasResultados || abono == null" >
+            <button  class="button is-info " disabled><span><i class="fas fa-print" disable></i></span>Imprimir Ticket</button>
+            <button  class="button is-primary " disabled>Aceptar</button>
+            <button class="button is-danger " (click)="onCancel($event)">Cancelar</button>
+         </div>
+
+         <div *ngIf="abono >= totalDeudasResultados">
+             <button  class="button is-info " (click)="onPrintln($event)" disabled><span><i class="fas fa-print"></i></span>Imprimir Ticket</button>
+             <button  class="button is-primary " (click)="onDeleteVarios($event)">Aceptar</button>
+             <button class="button is-danger" (click)="onCancel($event)">Cancelar</button>
+          </div>
+
+      </section>
+
+
+      <button *ngIf="cobrarTodo != true" class="button is-success" (click)="cobrarTodo=true">Cobrar Todo</button>
+      <button *ngIf="cobrarTodo != true" class="button is-danger" (click)="onCancel($event)">Cancelar</button>
+    </footer>
+  </div>
+
+</div>
 
   <div *ngIf="ediState" class="pupConfirmer">
     <!--editar deuda -->
@@ -240,7 +350,25 @@
             <button class="delete" aria-label="close" (click)="onCancel($event)"></button>
           </header>
           <section class="modal-card-body">
+
             <div class="field">
+              <label  class="label">Nombre Completo</label>
+              <div class="control">
+                <input list="listacolores"  [(ngModel)]="deudornuevo.nombre"
+                  #nombre="ngModel" name="nombre" class="input"
+                   placeholder="Juanito Oso" minlength="8" maxlength="40" required>
+                  <datalist id="listacolores"  *ngFor="let nombre of namelist ">
+                    <option value="{{nombre}}"  *ngFor="let nombre of namelist ">{{nombre}}</option>
+                  </datalist>
+
+                  <div class="help" *ngIf="nombre.touched && !nombre.valid">
+                    <div class="help is-danger"  *ngIf="nombre.errors.required"><i class="fas fa-exclamation-circle"></i>El Nombre es Requerido.</div>
+                    <div class="help is-danger" *ngIf="nombre.errors.minlength"><i class="fas fa-exclamation-circle"></i>El Nombre debe contener almenos 8 caracteres.</div>
+                  </div>
+              </div>
+            </div>
+
+        <!--    <div class="field">
               <label  class="label">Nombre Completo</label>
               <div class="control">
                   <input  [(ngModel)]="deudornuevo.nombre"
@@ -251,7 +379,7 @@
                     <div class="help is-danger" *ngIf="nombre.errors.minlength"><i class="fas fa-exclamation-circle"></i>El Nombre debe contener almenos 8 caracteres.</div>
                   </div>
               </div>
-            </div>
+            </div>  -->
             <div class="field">
               <label  class="label">Cantidad</label>
               <div class="control">
@@ -380,7 +508,6 @@
             <strong>Correcto!  </strong>Deuda  Modificada.
           </div>
         </div>
-
         </div>
 
         <div *ngIf="mendeleState" class="">

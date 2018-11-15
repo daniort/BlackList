@@ -38,10 +38,8 @@ export class DeudasService {
   deleteDeuda(id: string){
     this.deudasDoc=this.db.doc(`deudas/${id}`);
     this.deudasDoc.delete();
-    console.log("eliminando en el serice");
   }
   editDeuda(deuda:DeudorInterface){
-    console.log("Solo modificar")
     this.deudasDoc=this.db.doc(`deudas/${deuda.id}`);
     this.deudasDoc.update(deuda);
   }

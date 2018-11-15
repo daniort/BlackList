@@ -13,8 +13,9 @@ export class DeudoresComponent implements OnInit {
   myForm: FormGroup;
   //////////////////////////////////////7
   deudoritem:DeudorInterface[];
-  deudoritemFilter:string[];
+  deudoritemFilter:DeudorInterface[];
   deudoritemAlll:string[];
+  namelist:string[];
   deudaParaEditar:DeudorInterface;
   deudornuevo:DeudorInterface={
       nombre:'',
@@ -26,10 +27,13 @@ export class DeudoresComponent implements OnInit {
   crearState:boolean=false;
   ediState:boolean=false;
   deleState:boolean=false;
+  deleVariosState:boolean=false;
   idToDelete:string;
   totalDeudas=0;
-  abono=0;
+  totalDeudasResultados=0;
+  abono:number;
   resto:number;
+    efectivo:number;
   desbloq=false;
   mencrearState:boolean=false;
   menediState:boolean=false;
@@ -37,13 +41,22 @@ export class DeudoresComponent implements OnInit {
   byBuscar:string;
   filtroActive:boolean=null;
   filtroVacio:boolean=null;
+  cobrarTodo:boolean=null;
+  resultadosIguales:boolean=false;
+  primernombre:string;
+  inputBuscar='';
+  confirmerpagoTotal:boolean=false;
   constructor( public DeudasService:DeudasService,
-                          private fb:FormBuilder) { }
+                          private fb:FormBuilder) {
+                              this.namelist=[];
+                             }
   ngOnInit() {
     this.DeudasService.getDeudas().subscribe(deuda =>{
             this.deudoritem=deuda;
+            this.totalDeudas=0;
              for (let unaDeuda of this.deudoritem) {
-             this.totalDeudas += unaDeuda.cantidad;
+             this.totalDeudas += unaDeuda.cantidad;//generamos le total de dudas
+             this.namelist.push(unaDeuda.nombre);//llenamos el arreglo de nombres
            }
        });
     this.myForm = this.fb.group({ buscar: '' });
@@ -55,6 +68,29 @@ export class DeudoresComponent implements OnInit {
             this.filtroActive=true;
             this.filtroVacio=null;
             this.deudoritemFilter=myArray2;
+
+              this.totalDeudasResultados=0;
+              this.resultadosIguales=false;
+              for (let unaDeuda of this.deudoritemFilter) {
+              this.totalDeudasResultados += unaDeuda.cantidad;//generamos le total de dudas
+              }
+              for (let i = 0; i < this.deudoritemFilter.length; i++) {
+                if ( this.deudoritemFilter.length==1) {
+                          this.resultadosIguales=true;
+                }
+                if (i==0) {
+                      this.primernombre=this.deudoritemFilter[i].nombre;
+                }else{
+                  if (this.primernombre==this.deudoritemFilter[i].nombre) {
+                    this.primernombre=this.deudoritemFilter[i].nombre;
+                    this.resultadosIguales=true;
+                  }else{
+                    this.resultadosIguales=false;
+                    break
+                  }
+                }
+              }
+
         }else{
           //Vacio
           this.filtroActive=false;
@@ -70,7 +106,6 @@ export class DeudoresComponent implements OnInit {
       }
     });
   }
-
   getDeudasAll():string[]{
     let myArray3=[];
     for (let entry of this.deudoritem) {
@@ -78,7 +113,7 @@ export class DeudoresComponent implements OnInit {
     }
     return myArray3;
   }
-  getDeudasByNombre(val:string):string[]{
+  getDeudasByNombre(val:string):DeudorInterface[]{
     console.log(val);
     let encontrados=0;
     let myArray=[];
@@ -108,6 +143,11 @@ export class DeudoresComponent implements OnInit {
     this.ediState=true;
   }
   onCreateYa(){
+    //convertimos los datos a mayusculas
+    this.deudornuevo.nombre= this.deudornuevo.nombre.toUpperCase();
+    this.deudornuevo.descripcion= this.deudornuevo.descripcion.toUpperCase();
+    this.deudornuevo.nota= this.deudornuevo.nota.toUpperCase();
+    //enviamos el arreglo de la nueva deuda
     this.DeudasService.addDeuda(this.deudornuevo);
     this.onCancel();
     this.totalDeudas=0;
@@ -117,9 +157,13 @@ export class DeudoresComponent implements OnInit {
     this.crearState=false;
     this.ediState=false;
     this.deleState=false;
+    this.deleVariosState=false;
+    this.cobrarTodo=false;
     this.desbloq = false;
     this.abono=0;
     this.deudaParaEditar=null;
+    this.totalDeudasResultados=0;
+    this.cobrarTodo=null;
     this.deudornuevo={
         nombre:'',
         cantidad:0,
@@ -143,12 +187,30 @@ export class DeudoresComponent implements OnInit {
           this.onMensajeEditado();
         }
       }
+  onDeleteVarios($event){
+    for (let unaDeuda of this.deudoritemFilter) {
+      this.DeudasService.deleteDeuda(unaDeuda.id);
+      console.log("Eliminando...");
+    }
+    this.filtroActive=null;
+    this.filtroVacio=null;
+    this.totalDeudas=0;
+    this.ngOnInit();
+    this.onCancel();
+  }
+  onPrintln($event){
+    console.log("imprimiendo");
+    console.log(this.deudoritemFilter);
+  }
   onDesbloq($event){
     this.desbloq =! this.desbloq;
   }
   onSaldarDeuda($event,duda: DeudorInterface){
     this.deudaParaEditar=duda;
     this.deleState=true;
+  }
+  onSaldarVariasDeuda($event){
+    this.deleVariosState=true;
   }
   onGuardar($event){
     this.DeudasService.editDeuda(this.deudaParaEditar);
@@ -174,5 +236,8 @@ export class DeudoresComponent implements OnInit {
        this.mendeleState = false;
      }, 2500);
   }
-
+  onConfirmer($event){
+    this.deleVariosState=false;
+    this.confirmerpagoTotal=true;
+  }
 }
