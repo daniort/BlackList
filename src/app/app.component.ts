@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,Output,Input } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +7,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'BlackList';
+  id:string;
+  logeado:boolean;
+
+  onLogear(id):void{
+    this.id=id;
+    if (this.id != null) {
+        this.logeado=true;
+    }              
+  }
 }

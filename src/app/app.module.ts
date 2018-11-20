@@ -20,7 +20,6 @@ import {HomeService} from './servicios/home.service';
 import {DeudasService} from './servicios/deudas.service';
 import {UserService} from './servicios/user.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RegistroComponent } from './componentes/auth/registro/registro.component';
 import { LoginComponent } from './componentes/auth/login/login.component';
 
 
@@ -29,8 +28,8 @@ const routes: Routes = [
 { path: 'home', component: HomeComponent } ,
 { path: 'deudores', component: DeudoresComponent } ,
 { path: 'almacen', component: AlmacenComponent },
-{ path: 'reg', component: RegistroComponent },
-{ path: 'logeo', component: LoginComponent },
+
+//{ path: 'logeo', component: LoginComponent },
 { path: '**', component: HomeComponent }
 ];
 
@@ -41,7 +40,7 @@ const routes: Routes = [
    DeudoresComponent,
    AlmacenComponent,
    HomeComponent,
-   RegistroComponent,
+
    LoginComponent
   ],
   imports: [

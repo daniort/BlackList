@@ -1,6 +1,11 @@
-<header>
-<app-navbar></app-navbar>
-</header>
-<div class="column container">
- <router-outlet></router-outlet>
- </div>
+<div *ngIf="!logeado"class="">
+  <app-login (activar)="onLogear($event)"></app-login>
+</div>
+<div *ngIf="logeado"class="">
+  <header>
+  <app-navbar></app-navbar>
+  </header>
+  <div class="column container">
+   <router-outlet></router-outlet>
+   </div>
+</div>
