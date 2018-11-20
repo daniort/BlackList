@@ -3,7 +3,7 @@
 </div>
 <div *ngIf="logeado"class="">
   <header>
-  <app-navbar></app-navbar>
+  <app-navbar  [iduser]="id"></app-navbar>
   </header>
   <div class="column container">
    <router-outlet></router-outlet>

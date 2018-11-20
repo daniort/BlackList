@@ -7,13 +7,13 @@ import { Component,Output,Input } from '@angular/core';
 })
 export class AppComponent {
   title = 'BlackList';
-  id:string;
+  @Input() id:string;
   logeado:boolean;
 
   onLogear(id):void{
     this.id=id;
     if (this.id != null) {
         this.logeado=true;
-    }              
+    }
   }
 }

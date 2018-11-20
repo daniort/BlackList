@@ -40,6 +40,8 @@ LoginVendedor(u:string, p:string){
   LogOutVendedor(u:string, p:string){
     //for(let us of this.users){
     }
-
-
+  getUserbyID(i:string){
+    console.log(this.users)
+    return "danis"
+  }
 }
