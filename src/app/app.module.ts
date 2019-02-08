@@ -13,24 +13,27 @@ import { NavbarComponent } from './componentes/navbar/navbar.component';
 import { DeudoresComponent } from './componentes/deudores/deudores.component';
 import { AlmacenComponent } from './componentes/almacen/almacen.component';
 import { HomeComponent } from './componentes/home/home.component';
+import { LoginComponent } from './componentes/auth/login/login.component';
+import { AdminComponent } from './componentes/admin/admin.component';
 
 
 import {AlmacenService} from './servicios/almacen.service';
 import {HomeService} from './servicios/home.service';
 import {DeudasService} from './servicios/deudas.service';
 import {UserService} from './servicios/user.service';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LoginComponent } from './componentes/auth/login/login.component';
+
 
 
 const routes: Routes = [
-{ path: '', component: HomeComponent },
+{ path: '', component: DeudoresComponent },
+{ path: 'admin', component: AdminComponent } ,
 { path: 'home', component: HomeComponent } ,
 { path: 'deudores', component: DeudoresComponent } ,
 { path: 'almacen', component: AlmacenComponent },
-
-//{ path: 'logeo', component: LoginComponent },
-{ path: '**', component: HomeComponent }
+{ path: 'login', component: LoginComponent },
+{ path: '**', component: DeudoresComponent }
 ];
 
 @NgModule({
@@ -40,8 +43,8 @@ const routes: Routes = [
    DeudoresComponent,
    AlmacenComponent,
    HomeComponent,
-
-   LoginComponent
+   LoginComponent,
+   AdminComponent
   ],
   imports: [
     BrowserModule,
@@ -53,6 +56,6 @@ const routes: Routes = [
    BrowserAnimationsModule
   ],
   providers: [AlmacenService,HomeService,DeudasService,UserService],
-    bootstrap: [AppComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

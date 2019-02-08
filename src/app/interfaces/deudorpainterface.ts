@@ -1,11 +1,11 @@
-export interface DeudorInterface{
+export interface DeudorPaInterface{
   id ?: string;
   nombre ?: string;
   cantidad ?: number;
   descripcion ?: string;
-  botella ?: boolean;
   nota ?: string;
-  fecha ?: any;
+  fechadeuda ?: string;
+  fechapago ?: any;
   idUserDeuda ?: string;
-
+  idUserSaldo ?: string;
 }

@@ -12,6 +12,9 @@ export class UserService {
   private UserCollection : AngularFirestoreCollection<UserInterface>;
   users: Observable <UserInterface[]>;
   usersDoc: AngularFirestoreDocument <UserInterface>;
+  root:string="ADMIN";
+
+  esAdmin:boolean=false;
 
   constructor(public db: AngularFirestore) {
     this.UserCollection = db.collection<UserInterface>('users');
@@ -30,18 +33,23 @@ addUser(user: UserInterface){
   this.UserCollection.add(user);
   console.log("registrado!")
 }
-editUser(user: UserInterface){
-  this.usersDoc=this.db.doc(`user/${user.id}`);
-  this.usersDoc.update(user);
+editUser(user: UserInterface):void{
+    this.usersDoc=this.db.doc<UserInterface>(`users/${user.id}`);
+    this.usersDoc.update(user);
 }
-LoginVendedor(u:string, p:string){
-  //for(let us of this.users){
-  }
-  LogOutVendedor(u:string, p:string){
-    //for(let us of this.users){
+Auth(name:string){
+  if (name===this.root) {
+    this.esAdmin=true;
     }
-  getUserbyID(i:string){
-    console.log(this.users)
-    return "danis"
-  }
+}
+info(){
+  return this.esAdmin
+}
+Reset(){
+  this.esAdmin=false;
+}
+getUsersbyId(){
+  
+}
+
 }

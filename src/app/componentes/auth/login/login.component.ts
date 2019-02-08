@@ -58,11 +58,15 @@ export class LoginComponent implements OnInit {
     for (let unaUsuario of this.useritem) {
       if (c === unaUsuario.user) {
           if (d === unaUsuario.pass) {
+            if (unaUsuario.estado) {
+              this.UserService.Auth(unaUsuario.user);
+              this.activar.emit(unaUsuario.id); //enviamos la id al componente principal
+               break
+            }else{
+              //mensaje de no autorizado
+              console.log("no autorizado");
+            }
 
-            console.log("Coinciden")
-            console.log("Enviando" + unaUsuario.id)
-           this.activar.emit(unaUsuario.id); //enviamos la id al componente principal
-            break
           }else{
             //this.passMenssageFail=true;
             console.log("pass incorrecta ");

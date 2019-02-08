@@ -3,7 +3,8 @@ import {Observable} from 'rxjs';
 import {map} from   'rxjs/operators';
 import { DeudorInterface } from '../interfaces/deudorinterface';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
-
+import {DeudorPaInterface}  from '../interfaces/deudorpainterface';
+import {DeudaspagadasService} from '../servicios/deudaspagadas.service';
 
 
 
@@ -14,6 +15,8 @@ export class DeudasService {
   private DeudasCollection : AngularFirestoreCollection<DeudorInterface>;
   deudas: Observable <DeudorInterface[]>;
   deudasDoc: AngularFirestoreDocument <DeudorInterface>;
+
+  idActive:string='';
 
   constructor(public db: AngularFirestore) {
     this.DeudasCollection = db.collection<DeudorInterface>('deudas', ref => ref.orderBy('fecha','desc'));
@@ -28,11 +31,10 @@ export class DeudasService {
     );
     return this.deudas;
   }
-
-
   addDeuda(deuda:DeudorInterface){
     const fechaNow = Date.now();
     deuda.fecha=fechaNow;
+    //deuda.idUserDeuda=this.idActive
     this.DeudasCollection.add(deuda);
   }
   deleteDeuda(id: string){
@@ -42,5 +44,12 @@ export class DeudasService {
   editDeuda(deuda:DeudorInterface){
     this.deudasDoc=this.db.doc(`deudas/${deuda.id}`);
     this.deudasDoc.update(deuda);
+
+  }
+  setUserActive(id:string):void{
+    this.idActive=id;
+  }
+  getUserActive(){
+    return this.idActive;
   }
 }
