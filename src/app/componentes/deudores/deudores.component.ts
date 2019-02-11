@@ -35,6 +35,7 @@ export class DeudoresComponent implements OnInit {
       nombre:'',
       cantidad:0,
       descripcion:'',
+      botella:null,
       nota:'',
       fecha:'',
       idUserDeuda:''
@@ -46,6 +47,7 @@ export class DeudoresComponent implements OnInit {
     nombre : '',
     cantidad : 0,
     descripcion : '',
+    botella:null,
     nota : '',
   };
   historiasitem:HistoriaInterface[];
@@ -71,8 +73,8 @@ export class DeudoresComponent implements OnInit {
   inicio:boolean=true;
   historial:boolean=null;
   deudaspagadas:boolean=null;
-  resultadosIguales:boolean=false;
-
+  resultadosIguales:boolean;
+  editbotella=false;
   inputBuscar='';
   confirmerpagoTotal:boolean=false;
   resultadosBitacora:boolean;
@@ -121,13 +123,14 @@ export class DeudoresComponent implements OnInit {
             this.filtroVacio=null;
             this.deudoritemFilter=myArray2;
             this.totalDeudasResultados=0;
-            this.resultadosIguales=false;
             //creamos el total de estas deudas
               for (let unaDeuda of this.deudoritemFilter) {
-                  this.totalDeudasResultados += unaDeuda.cantidad;//generamos le total de dudas
+                  this.totalDeudasResultados += unaDeuda.cantidad;
+                  //generamos le total de dudas
               }
 
               for (let i = 0; i < this.deudoritemFilter.length; i++) {
+                console.log(  this.resultadosIguales);
                 let primernombre;
                 if ( this.deudoritemFilter.length==1) {
                           this.resultadosIguales=true;
@@ -151,7 +154,6 @@ export class DeudoresComponent implements OnInit {
           this.filtroVacio=true;
           this.deudoritemAlll=this.getDeudasAll();
         }
-        console.log(myArray2)
       }else{
         //todos las deudas
         this.filtroActive=false;
@@ -245,6 +247,7 @@ export class DeudoresComponent implements OnInit {
     this.historianueva.descripcion=this.deudornuevo.descripcion;
     this.historianueva.nota=this.deudornuevo.nota;
     this.historianueva.cantidad=this.deudornuevo.cantidad;
+    this.historianueva.botella=this.deudornuevo.botella;
     this.historianueva.idUser=this.getUserbyID(this.DeudasService.getUserActive());
     this.HistorialService.addHis(this.historianueva);
     //enviar datos a bitacora
@@ -253,6 +256,7 @@ export class DeudoresComponent implements OnInit {
     this.onMensajeCreador();
   }
   onCancel(){
+
     this.crearState=false;
     this.ediState=false;
     this.deleState=false;
@@ -280,27 +284,49 @@ export class DeudoresComponent implements OnInit {
       descripcion : '',
       nota : '',
     };
+    this.editbotella=null;
   }
   onDeleteConfirmer($event){
     this.resto=this.deudaParaEditar.cantidad - this.abono;
     if (this.resto<=0){
-      this.DeudasService.deleteDeuda(this.deudaParaEditar.id);
-      this.DeudaspagadasService.addDeuda(this.deudaParaEditar,this.getUserbyID(this.DeudasService.getUserActive()));//ya funciona
-      this.historianueva.accion="Eliminó";
-      this.historianueva.idUser=this.getUserbyID(this.DeudasService.getUserActive());
-      this.historianueva.idDeuda=this.deudaParaEditar.id;
+      if (this.deudaParaEditar.botella) {
+          //editar cantidad
+           this.deudaParaEditar.cantidad=0;
+            this.DeudasService.editDeuda(this.deudaParaEditar);
+            this.historianueva.accion="Cobró";
+            this.historianueva.idUser=this.getUserbyID(this.DeudasService.getUserActive());
+            this.historianueva.idDeuda=this.deudaParaEditar.id;
+            this.historianueva.nombre=this.deudaParaEditar.nombre;
+            this.historianueva.descripcion=this.deudaParaEditar.descripcion;
+            this.historianueva.nota=this.deudaParaEditar.nota;
+            this.historianueva.cantidad=0;
+            this.historianueva.botella=this.deudaParaEditar.botella;
+            this.HistorialService.addHis(this.historianueva);
+            this.onCancel();
+            this.totalDeudas=0;
+            this.onMensajeEditado();
+      }else{
+        //eliminar todo
+        this.DeudasService.deleteDeuda(this.deudaParaEditar.id);
+        this.DeudaspagadasService.addDeuda(this.deudaParaEditar,this.getUserbyID(this.DeudasService.getUserActive()));//ya funciona
+        this.historianueva.accion="Eliminó";
+        this.historianueva.idUser=this.getUserbyID(this.DeudasService.getUserActive());
+        this.historianueva.idDeuda=this.deudaParaEditar.id;
 
-      this.historianueva.nombre=this.deudaParaEditar.nombre;
-      this.historianueva.descripcion=this.deudaParaEditar.descripcion;
-      this.historianueva.nota=this.deudaParaEditar.nota;
-      this.historianueva.cantidad=this.deudaParaEditar.cantidad;
+        this.historianueva.nombre=this.deudaParaEditar.nombre;
+        this.historianueva.descripcion=this.deudaParaEditar.descripcion;
+        this.historianueva.nota=this.deudaParaEditar.nota;
+        this.historianueva.cantidad=this.deudaParaEditar.cantidad;
+        this.historianueva.botella=this.deudaParaEditar.botella;
 
-      this.HistorialService.addHis(this.historianueva);
+        this.HistorialService.addHis(this.historianueva);
 
 
-      this.onCancel();
-      this.totalDeudas=0;
-      this.onMensajeEliminado();
+        this.onCancel();
+        this.totalDeudas=0;
+        this.onMensajeEliminado();
+      }
+
         }else{
           this.deudaParaEditar.cantidad=this.resto;
           this.DeudasService.editDeuda(this.deudaParaEditar);
@@ -311,26 +337,61 @@ export class DeudoresComponent implements OnInit {
         }
       }
   onDeleteVarios($event){
-    for (let unaDeuda of this.deudoritemFilter) {
-      this.DeudasService.deleteDeuda(unaDeuda.id);
-      this.historianueva.accion="Eliminó";
-      this.historianueva.idUser=this.getUserbyID(this.DeudasService.getUserActive());
-      this.historianueva.idDeuda=unaDeuda.id;
-
-            this.historianueva.nombre=unaDeuda.nombre;
-            this.historianueva.descripcion=unaDeuda.descripcion;
-            this.historianueva.nota=unaDeuda.nota;
-            this.historianueva.cantidad=unaDeuda.cantidad;
-
-      this.HistorialService.addHis(this.historianueva);
-      this.DeudaspagadasService.addDeuda(unaDeuda,this.getUserbyID(this.DeudasService.getUserActive()));//ya funciona      //tambien enviar datos del usuario activo
-      console.log("Eliminando...");
+    let sibotella;
+    for (let unaDeuda of this.deudoritemFilter){
+      if (unaDeuda.botella) {
+          sibotella=true;
+          }
     }
-    this.filtroActive=null;
-    this.filtroVacio=null;
-    this.totalDeudas=0;
-    this.ngOnInit();
-    this.onCancel();
+    if (sibotella) {
+              //solo editar
+              for (let unaDeuda of this.deudoritemFilter) {
+                unaDeuda.cantidad=0;
+                this.DeudasService.editDeuda(unaDeuda);
+
+                      this.historianueva.accion="Cobró";
+                      this.historianueva.idUser=this.getUserbyID(this.DeudasService.getUserActive());
+                      this.historianueva.idDeuda=unaDeuda.id;
+                      this.historianueva.nombre=unaDeuda.nombre;
+                      this.historianueva.descripcion=unaDeuda.descripcion;
+                      this.historianueva.nota=unaDeuda.nota;
+                      this.historianueva.cantidad=0;
+                      this.historianueva.botella=unaDeuda.botella;
+
+                this.HistorialService.addHis(this.historianueva);
+                this.DeudaspagadasService.addDeuda(unaDeuda,this.getUserbyID(this.DeudasService.getUserActive()));//ya funciona      //tambien enviar datos del usuario activo
+                console.log("Eliminando...");
+              }
+              this.filtroActive=null;
+              this.filtroVacio=null;
+              this.totalDeudas=0;
+              this.ngOnInit();
+              this.onCancel();
+    }else{
+      //eliminar todo
+      for (let unaDeuda of this.deudoritemFilter) {
+        this.DeudasService.deleteDeuda(unaDeuda.id);
+        this.historianueva.accion="Eliminó";
+        this.historianueva.idUser=this.getUserbyID(this.DeudasService.getUserActive());
+        this.historianueva.idDeuda=unaDeuda.id;
+
+              this.historianueva.nombre=unaDeuda.nombre;
+              this.historianueva.descripcion=unaDeuda.descripcion;
+              this.historianueva.nota=unaDeuda.nota;
+              this.historianueva.cantidad=unaDeuda.cantidad;
+              this.historianueva.botella=unaDeuda.botella;
+
+        this.HistorialService.addHis(this.historianueva);
+        this.DeudaspagadasService.addDeuda(unaDeuda,this.getUserbyID(this.DeudasService.getUserActive()));//ya funciona      //tambien enviar datos del usuario activo
+        console.log("Eliminando...");
+      }
+      this.filtroActive=null;
+      this.filtroVacio=null;
+      this.totalDeudas=0;
+      this.ngOnInit();
+      this.onCancel();
+    }
+
   }
   onPrintln($event){
     console.log("imprimiendo");
@@ -355,6 +416,7 @@ export class DeudoresComponent implements OnInit {
     this.historianueva.descripcion=this.deudaParaEditar.descripcion;
     this.historianueva.nota=this.deudaParaEditar.nota;
     this.historianueva.cantidad=this.deudaParaEditar.cantidad;
+    this.historianueva.botella=this.deudaParaEditar.botella;
     this.HistorialService.addHis(this.historianueva);
     this.onCancel();
     this.totalDeudas=0;
@@ -450,5 +512,8 @@ export class DeudoresComponent implements OnInit {
     }
     return  myArray
 
+  }
+  deseditbotella(){
+    this.editbotella=!this.editbotella;
   }
 }

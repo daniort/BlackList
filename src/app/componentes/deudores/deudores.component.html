@@ -80,6 +80,7 @@
           <th>#</th>
           <th>Fecha</th>
           <th>Cliente</th>
+          <th id="botellath"></th>
           <th>Concepto</th>
           <th>Nota</th>
           <th class="signo"></th>
@@ -87,12 +88,16 @@
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody *ngIf="filtroActive==null && filtroVacio==null"><!-- resultados iniciales -->
+      <tbody *ngIf="!filtroActive && !filtroVaciol"><!-- resultados iniciales -->
         <tr class="tr-body"  *ngFor="let duda of deudoritem;let i=index ">
            <th>{{i+1}}</th>
            <th>{{ duda.fecha | date:'d/M/y'}}</th>
            <th>{{duda.nombre}}</th>
-           <th>{{duda.descripcion}}</th>
+           <th id="botellath"><figure class="image is-24x24">
+             <img *ngIf="duda.botella" src="./assets/images/wine-bottle.png" id="" alt="">
+             <img *ngIf="!duda.botella" src="" id="" alt=""> </figure>
+           </th>
+           <th> {{duda.descripcion}}</th>
              <th>
                <label *ngIf="duda.nota.length == 0" class="datoVacio">Sin Nota</label>
                <label *ngIf="duda.nota.length >= 1" class="">{{duda.nota}}</label>    </th>
@@ -111,37 +116,16 @@
           </th>
         </tr>
       </tbody>
-      <tbody *ngIf="filtroActive==false && filtroVacio==null"><!-- resultados no iniciales -->
-        <tr class="tr-body"  *ngFor="let duda of deudoritemAlll;let i=index ">
-           <th>{{i+1}}</th>
-           <th>{{ duda.fecha | date:'d/M/y'}}</th>
-           <th>{{duda.nombre}}</th>
-           <th>{{duda.descripcion}}</th>
-             <th>
-               <label *ngIf="duda.nota.length == 0" class="datoVacio">Sin Nota</label>
-               <label *ngIf="duda.nota.length >= 1" class="">{{duda.nota}}</label>    </th>
-             <th class="signo"> <span><i class="fas fa-dollar-sign"></i></span> </th>
-             <th  class="celda-numero" >
-               <label *ngIf="duda.cantidad == 0" class="datoVacio">0.00</label>
-                <label for="" *ngIf="duda.cantidad != 0">
-                 {{duda.cantidad}}<label *ngIf="duda.cantidad % 1 == 0">.00</label><label *ngIf="duda.cantidad % 1 != 0">0</label>
-               </label>
-             </th>
-           <th class="btn-acciones">
-             <button type="button" name="button"  (click)="onEditDeuda($event,duda)" class="button is-primary">
-               <i class="fas fa-edit"></i> Editar</button>
-             <button type="button" name="button" (click)="onSaldarDeuda($event,duda)" class="button is-success">
-               <i class="fas fa-money-bill-alt"></i>Saldar</button>
-            </th>
-
-        </tr>
-      </tbody>
       <tbody *ngIf="filtroActive==true && filtroVacio==null"><!-- resultados del filtro -->
         <tr class="tr-body"  *ngFor="let duda of deudoritemFilter;let i=index ">
            <th>{{i+1}}</th>
            <th>{{ duda.fecha | date:'d/M/y'}}</th>
            <th>{{duda.nombre}}</th>
-           <th>{{duda.descripcion}}</th>
+           <th id="botellath"><figure class="image is-24x24">
+               <img *ngIf="duda.botella" src="./assets/images/wine-bottle.png" id="" alt="">
+               <img *ngIf="!duda.botella" src="" id="" alt=""> </figure>
+             </th>
+              <th> {{duda.descripcion}}</th>
              <th>
                <label *ngIf="duda.nota.length == 0" class="datoVacio">Sin Nota</label>
                <label *ngIf="duda.nota.length >= 1" class="">{{duda.nota}}</label>    </th>
@@ -164,7 +148,7 @@
           <tr class="vacio" >
              <th></th>
              <th></th>
-             <th><i class="fas fa-file-excel"></i>Ningun Resultado Encontrado.</th>
+             <th><i class="fas fa-file-excel"></i>Vacio.</th>
              <th></th>
                <th>  </th>
                <th class="signo"></th>
@@ -176,8 +160,9 @@
       <tfoot class="white-ter" *ngIf="filtroActive==null && filtroVacio==null"><!-- resultados iiciales -->
         <tr>
           <th></th>
-          <th>resultados iiciales</th>
           <th></th>
+          <th>iniciales</th>
+          <th id="botellath"></th>
           <th></th>
           <th class="deuda-total">Deuda Total:</th>
           <th class="signo"><i class="fas fa-dollar-sign"></i></th>
@@ -186,24 +171,12 @@
           <th></th>
         </tr>
       </tfoot>
-      <tfoot class="white-ter" *ngIf="filtroActive==false && filtroVacio==null"><!-- todos los resultados no inciales -->
-        <tr>
-          <th></th>
-          <th></th>
-          <th>resultados no inciales</th>
-          <th></th>
-          <th class="deuda-total">Deuda Total:</th>
-          <th class="signo"><i class="fas fa-dollar-sign"></i></th>
-          <th class="celda-numero">{{totalDeudas}}<label *ngIf="totalDeudas % 1 == 0">.00</label><label *ngIf="totalDeudas % 1 != 0">0</label>
-          </th>
-          <th></th>
-        </tr>
-        </tfoot>
       <tfoot class="white-ter"  *ngIf="filtroActive==true && filtroVacio==null"> <!-- filtro con resultados -->
         <tr>
           <th></th>
           <th></th>
-          <th> filtro con resultados</th>
+          <th> filtro</th>
+          <th id="botellath"></th>
           <th></th>
           <th class="deuda-total">Deuda Total:</th>
           <th class="signo"><i class="fas fa-dollar-sign"></i></th>
@@ -220,6 +193,7 @@
         <tr>
           <th></th>
           <th></th>
+          <th id="botellath"></th>
           <th></th>
           <th></th>
           <th class="deuda-total"></th>
@@ -245,6 +219,7 @@
           <th>Usuario</th>
           <th>Accion</th>
           <th>Cliente</th>
+          <th id="botellath"></th>
           <th>Concepto</th>
           <th>Nota</th>
           <th>Cantidad</th>
@@ -262,6 +237,10 @@
                 <strong  [ngStyle]="{color:setColor(duda.accion)}" >  {{duda.accion}}</strong>
               </td>
               <td>{{duda.nombre}}</td>
+              <td id="botellath"><figure class="image is-24x24">
+                  <img *ngIf="duda.botella" src="./assets/images/wine-bottle.png" id="" alt="">
+                  <img *ngIf="!duda.botella" src="" id="" alt=""> </figure>
+                </td>
               <td>{{duda.descripcion}}</td>
               <td>{{duda.nota}}</td>
               <td>${{duda.cantidad}}</td>
@@ -276,6 +255,10 @@
                 <strong  [ngStyle]="{color:setColor(duda.accion)}" >  {{duda.accion}}</strong>
               </td>
               <td>{{duda.nombre}}</td>
+              <td id="botellath"><figure class="image is-24x24">
+                  <img *ngIf="duda.botella" src="./assets/images/wine-bottle.png" id="" alt="">
+                  <img *ngIf="!duda.botella" src="" id="" alt=""> </figure>
+                </td>
               <td>{{duda.descripcion}}</td>
               <td>{{duda.nota}}</td>
               <td>${{duda.cantidad}}</td>
@@ -288,6 +271,7 @@
             <td></td>
             <td></td>
             <td></td>
+            <th id="botellath"></th>
             <td></td>
             <td></td>
             <td></td>
@@ -309,6 +293,7 @@
               <th>Fecha de Pago</th>
               <th>Fecha de Deuda</th>
               <th>Cliente</th>
+              <th id="botellath"> </th>
               <th>Concepto</th>
               <th>Nota</th>
               <th>Cantidad</th>
@@ -324,6 +309,10 @@
               <td>{{ duda.fechapago | date:'d/M/y'}}</td>
               <td>{{ duda.fechadeuda | date:'d/M/y'}}</td>
                <td>{{duda.nombre}}</td>
+               <td id="botellath"><figure class="image is-24x24">
+                   <img *ngIf="duda.botella" src="./assets/images/wine-bottle.png" id="" alt="">
+                   <img *ngIf="!duda.botella" src="" id="" alt=""> </figure>
+                 </td>
                <td>{{duda.descripcion}}</td>
                <td>{{duda.nota}}</td>
                <td class="celda-numero">$
@@ -343,6 +332,10 @@
               <td>{{ duda.fechapago | date:'d/M/y'}}</td>
               <td>{{ duda.fechadeuda | date:'d/M/y'}}</td>
                <td>{{duda.nombre}}</td>
+               <td id="botellath"><figure class="image is-24x24">
+                   <img *ngIf="duda.botella" src="./assets/images/wine-bottle.png" id="" alt="botella">
+                   <img *ngIf="!duda.botella" src="" id="" alt=""> </figure>
+                 </td>
                <td>{{duda.descripcion}}</td>
                <td>{{duda.nota}}</td>
                <td class="celda-numero">$
@@ -518,6 +511,16 @@
           <div class="control">
             <input [(ngModel)]="deudaParaEditar.descripcion" #descripcion="ngModel"name="descripcion" type="text" class="input"value="{{deudaParaEditar.descripcion}}"
             minlength="5" maxlength="40" required>
+            <label class="checkbox checkdesa"*ngIf="editbotella != true" >
+                <input type="checkbox" [(ngModel)]="deudaParaEditar.botella"
+                #botella="ngModel" name="botella" value="deudaParaEditar.botella"  id="check" disabled>
+                Debe  Botellas.</label>
+              <label class="checkbox checkactivo"  *ngIf="editbotella">
+                <input type="checkbox" [(ngModel)]="deudaParaEditar.botella"
+                #botella="ngModel" name="botella" value="deudaParaEditar.botella"  id="check" >
+                <strong>Debe  Botellas.</strong>
+              </label> <i class="fas fa-toggle-on" (click)="deseditbotella()"></i>
+
             <div class="help" *ngIf="descripcion.touched && !descripcion.valid" >
               <div class="help is-danger"  *ngIf="descripcion.errors.required"><i class="fas fa-exclamation-circle"></i>El Concepto es Requerido</div>
               <div class="help is-danger" *ngIf="descripcion.errors.minlength"><i class="fas fa-exclamation-circle"></i>Este campo requiere almenos 5 caracteres</div>
@@ -558,7 +561,7 @@
 
 
   <div *ngIf="crearState" class="pupConfirmer">
-    <!--crear deuda -->
+     <!--crear deuda -->
         <div class="modal-card">
           <header class="modal-card-head">
             <p class="modal-card-title"> <i class="fas fa-credit-card"></i>Nuevo Credito</p>
@@ -594,13 +597,19 @@
                   </div>
               </div>
             </div>
+
             <div class="field">
               <label  class="label">Concepto de Compra</label>
               <div class="control">
-                <input [(ngModel)]="deudornuevo.descripcion" #descripcion="ngModel" name="descripcion" type="text" class="input"
-                placeholder="Dos Galletas Marias" minlength="5" maxlength="50" required>
-                ¿Debe Envaces?<i class="fas fa-toggle-on" (click)="sibotella($event)"></i>
-
+                <input [(ngModel)]="deudornuevo.descripcion"
+                 #descripcion="ngModel" name="descripcion" type="text" class="input"
+                 placeholder="Dos Galletas Marias" minlength="5" maxlength="50" required>
+                    <label class="checkbox">
+                        <input type="checkbox" [(ngModel)]="deudornuevo.botella"
+                        #botella="ngModel" name="botella"
+                        id="check" >
+                        Debe  Botellas.
+                      </label>
                 <div class="help" *ngIf="descripcion.touched && !descripcion.valid" >
                   <div class="help is-danger"  *ngIf="descripcion.errors.required"><i class="fas fa-exclamation-circle"></i>El Concepto es Requerido</div>
                   <div class="help is-danger" *ngIf="descripcion.errors.minlength"><i class="fas fa-exclamation-circle"></i>Este campo requiere almenos 5 caracteres</div>

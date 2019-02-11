@@ -303,3 +303,19 @@ vacio:hover{
   border-left:  7px solid  #ddd;
 
 }
+#check{
+  height: 13px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.checkactivo{
+  color: black;
+}
+.checkdesa{
+  color: grey;
+}
+#botellath{
+  width: 6px;
+  padding-left: 0px;
+  padding-right: 0px;
+}

@@ -30,6 +30,7 @@ export class HistorialService {
   addHis(historia:HistoriaInterface){
     const fechaNow = Date.now();
     historia.fecha=fechaNow;
+
     //deuda.idUserDeuda=this.idActive
     this.HistoriaCollection.add(historia);
   }

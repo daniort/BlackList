@@ -22,7 +22,8 @@ export class DeudaspagadasService {
     nota : '',
     fechadeuda : '',
     idUserDeuda : '',
-    idUserSaldo : ''
+    idUserSaldo : '',
+    botella:null,
   };
 
   constructor(public db: AngularFirestore) {
@@ -49,6 +50,7 @@ export class DeudaspagadasService {
   this.deudapagada.nota=deuda.nota;
    this.deudapagada.fechapago=fechaNow;
    this.deudapagada.fechadeuda=deuda.fecha;
+   this.deudapagada.botella=deuda.botella;
    this.deudapagada.idUserDeuda=deuda.idUserDeuda; //Usuario que dio la deuda
    this.deudapagada.idUserSaldo=id; //Usario que atendio el saldo de deuda
    console.log(this.deudapagada);

@@ -8,5 +8,6 @@ export interface HistoriaInterface{
   cantidad ?: number;
   descripcion ?: string;
   nota ?: string;
+  botella ?:boolean;
 
 }

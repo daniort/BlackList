@@ -7,5 +7,4 @@ export interface DeudorInterface{
   nota ?: string;
   fecha ?: any;
   idUserDeuda ?: string;
-
 }
