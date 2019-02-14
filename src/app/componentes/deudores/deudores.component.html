@@ -88,7 +88,7 @@
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody *ngIf="!filtroActive && !filtroVaciol"><!-- resultados iniciales -->
+      <tbody *ngIf="!filtroActive && !filtroVacio"><!-- resultados iniciales -->
         <tr class="tr-body"  *ngFor="let duda of deudoritem;let i=index ">
            <th>{{i+1}}</th>
            <th>{{ duda.fecha | date:'d/M/y'}}</th>
@@ -157,7 +157,7 @@
           </tr>
       </tbody>
 
-      <tfoot class="white-ter" *ngIf="filtroActive==null && filtroVacio==null"><!-- resultados iiciales -->
+      <tfoot class="white-ter" *ngIf="!filtroActive && !filtroVacio"><!-- resultados iiciales -->
         <tr>
           <th></th>
           <th></th>
