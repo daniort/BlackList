@@ -34,5 +34,11 @@ export class AdminComponent implements OnInit {
     }
 
   }
+  onDelete(user: UserInterface){
+    if (user.user!="ADMIN") {
+      this.UserService.deleteUser(user.id);
+      this.ngOnInit();
+    }
+  }
 
 }

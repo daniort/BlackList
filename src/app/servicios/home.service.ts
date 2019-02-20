@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from   'rxjs/operators';
-import { ProductoInterface } from '../interfaces/productointerface';
+import { ProductoInterface } from '../interfaces/productosinterface';
 import { CarritoInterface } from '../interfaces/carritointerface';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 

@@ -8,7 +8,7 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument 
 @Injectable({
   providedIn: 'root'
 })
-export class AlmacenService {
+export class ProductoService {
   private ProductosCollection : AngularFirestoreCollection<ProductoInterface>;
   productos: Observable <ProductoInterface[]>;
   productosDoc: AngularFirestoreDocument <ProductoInterface>;

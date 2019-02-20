@@ -29,7 +29,9 @@
       <tr *ngFor="let duda of userritem;let i=index ">
         <td>{{i}}</td>
         <td>{{duda.user}}</td>
-        <td>{{duda.estado}} <button class="button is-small is-warning" type="button" name="button" (click)="onChange(duda)">Cambiar</button></td>
+        <td *ngIf="duda.estado" id="true"><strong>{{duda.estado}}</strong><button class="button is-small is-warning" type="button" name="button" (click)="onChange(duda)">Cambiar</button></td>
+        <td *ngIf="!duda.estado"  id="false">{{duda.estado}} <button class="button is-small is-warning" type="button" name="button" (click)="onChange(duda)">Cambiar</button></td>
+        <td><button class="button is-small is-danger" type="button" name="button" (click)="onDelete(duda)">Eliminar Usuario</button></td>
       </tr>
     </tbody>
 

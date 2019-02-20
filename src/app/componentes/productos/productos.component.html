@@ -1,0 +1,238 @@
+
+<div class="container ">
+
+<!-- botones -->
+<div class="columns botones" >
+  <div class="column is-four-fifths">
+      <input class="input is-primary buscar inputs" [(ngModel)]="searchText" type="text" placeholder="Buscar en Almacén" id="">
+  </div>
+  <div class="column">
+    <button class="button is-primary inputs" (click)="onDesbloq('add')" type="submit">
+      <i class="fas fa-plus"></i>
+       Agregar Producto</button>
+  </div>
+
+</div>
+  <!-- contenido -->
+  <div class="is-multiline columns productoitem">
+    <div class="column is-one-quarter-desktop is-one-third-tablet" *ngFor="let product of productoitem;let i=index">
+      <div class="list-item">
+
+        <div class="card">
+          <!-- Cabezera-->
+          <header class="card-header">
+            <p class="card-header-title">
+              {{product.nombre}}
+            </p>
+          </header>
+          <div class="card-image">
+                    <a href="#"><figure class="image is-16by9"><img src="./assets/images/ima.png" id="img_products" alt=""> </figure></a>
+          </div>
+
+          <!-- Contenido-->
+          <div class="card-content">
+            <div class="content">
+              <div class="costo">
+                  <div class="columns">
+                        <p>Precio de Compra: ${{ product.compra }}</p>
+                  </div>
+                  <div class="columns">
+                        <p>Precio de Venta: ${{product.venta}}</p>
+                  </div>
+              </div>
+              <br>
+              <time datetime="2016-1-1"  *ngIf="product.cantidad >= 1 ; else aviso">
+                <strong>{{product.cantidad}}</strong> pzs. Restantes.
+              </time>
+              <ng-template #aviso>
+                <time datetime="2016-1-1">
+                  <strong id="agotado">{{product.cantidad}}</strong> pzs. Restantes.
+                </time>
+              </ng-template>
+          </div>
+
+          </div>
+          <footer class="card-footer" >
+            <a  class="card-link" (click)="onEditProducto($event, product)" id="edit">Modificar</a>
+            <a  class="card-link" (click)="onDeleteProducto($event, product.id)" id="dele">Eliminar</a>
+          </footer>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<!--añadir produco -->
+ <div *ngIf="add" class="pupConfirmer">
+
+       <div class="modal-card">
+         <header class="modal-card-head">
+           <p class="modal-card-title"><i class="fas fa-credit-card"></i>Nuevo Producto</p>
+           <button class="delete" aria-label="close" (click)="clean()"></button>
+         </header>
+         <footer class="modal-card-foot">
+
+           <button class="button  is-disable"
+           *ngIf="!nombre.valid  || !descripcion.valid" disabled>Crear</button>
+
+           <button class="button is-acciones" (click)="saveChanges('add',productoEdit)"
+           *ngIf="nombre.valid  && presentacion.valid && pcosto.valid" id="edit">Agregar</button>
+
+           <button class="button is-active-cancel" (click)="clean()" id="dele">Cancelar</button>
+
+         </footer>
+
+       </div>
+ </div>
+
+<!--editar Producto -->
+ <div *ngIf="edit" class="pupConfirmer">
+   <div class="modal-card">
+     <header class="modal-card-head">
+       <p class="modal-card-title"> <i class="fas fa-credit-card"></i>Modificar Credito</p>
+       <button class="delete" aria-label="close" (click)="onCancel($event)"></button>
+     </header>
+     <section class="modal-card-body">
+       <div class="field">
+         <label  class="label">Nombre del Cliente </label>
+         <div class="control">
+             <input [(ngModel)]="deudaParaEditar.nombre" #nombre="ngModel" name="nombre"  type="email" class="input" value="{{deudaParaEditar.nombre}}" minlength="8" maxlength="50" required>
+             <div class="help" *ngIf="nombre.touched && !nombre.valid">
+               <div class="help is-danger"  *ngIf="nombre.errors.required"><i class="fas fa-exclamation-circle"></i>El Nombre es Requerido.</div>
+               <div class="help is-danger" *ngIf="nombre.errors.minlength"><i class="fas fa-exclamation-circle"></i>El Nombre debe contener almenos 8 caracteres.</div>
+             </div>
+         </div>
+       </div>
+       <div class="field">
+         <label  class="label">Concepto</label>
+         <div class="control">
+           <input [(ngModel)]="deudaParaEditar.descripcion" #descripcion="ngModel"name="descripcion" type="text" class="input"value="{{deudaParaEditar.descripcion}}"
+           minlength="5" maxlength="40" required>
+           <label class="checkbox checkdesa"*ngIf="editbotella != true" >
+               <input type="checkbox" [(ngModel)]="deudaParaEditar.botella"
+               #botella="ngModel" name="botella" value="deudaParaEditar.botella"  id="check" disabled>
+               Debe  Botellas.</label>
+             <label class="checkbox checkactivo"  *ngIf="editbotella">
+               <input type="checkbox" [(ngModel)]="deudaParaEditar.botella"
+               #botella="ngModel" name="botella" value="deudaParaEditar.botella"  id="check" >
+               <strong>Debe  Botellas.</strong>
+             </label> <i class="fas fa-toggle-on" (click)="deseditbotella()"></i>
+
+           <div class="help" *ngIf="descripcion.touched && !descripcion.valid" >
+             <div class="help is-danger"  *ngIf="descripcion.errors.required"><i class="fas fa-exclamation-circle"></i>El Concepto es Requerido</div>
+             <div class="help is-danger" *ngIf="descripcion.errors.minlength"><i class="fas fa-exclamation-circle"></i>Este campo requiere almenos 5 caracteres</div>
+           </div>
+         </div>
+       </div>
+       <div class="field">
+         <label  class="label">Nota</label>
+         <div class="control">
+           <input [(ngModel)]="deudaParaEditar.nota" #nota="ngModel" name="nota" type="text" class="input" value="{{deudaParaEditar.nota}}" minlength="4">
+         </div>
+       </div>
+       <div class="field">
+         <label  class="label">Total <i class="fas fa-toggle-on" (click)="onDesbloq($event)"></i> </label>
+         <div class="control totalBloq" id="total">
+           <div class="control  has-icons-left has-icons-right">
+                 <label  class="icon is-small is-left" *ngIf="desbloq == false" >$</label>
+                 <input *ngIf="desbloq == false" class="input" type="number" value="{{deudaParaEditar.cantidad}}"  disabled>
+                 <label  class="icon is-small is-left" *ngIf="desbloq == true" id="iconpeso" >$</label>
+                <input  *ngIf="desbloq == true"  [(ngModel)]="deudaParaEditar.cantidad" #cantidad="ngModel" name="cantidad"
+                type="number" class="input" value="{{deudaParaEditar.cantidad}}" required>
+                <div class="help is-danger" *ngIf="deudaParaEditar.cantidad < 0"><i class="fas fa-exclamation-circle"></i>No puesdes deber un numero negativo.</div>
+             </div>
+         </div>
+       </div>
+     </section>
+     <footer class="modal-card-foot">
+       <button class="button is-disable"   *ngIf="!nombre.valid  || !descripcion.valid  || deudaParaEditar.cantidad <0; else btnactive" disabled>Guardar</button>
+       <ng-template #btnactive>
+           <button class="button is-acciones"(click)="onGuardar($event)" id="edit" >Guardar</button>
+        </ng-template>
+       <button class="button is-active-cancel" (click)="onCancel($event)" id="dele">Cancelar</button>
+     </footer>
+   </div>
+ </div>
+
+<!--eliminar producto -->
+ <div *ngIf="dele" class="pupConfirmer">
+   <div class="modal-card">
+     <header class="modal-card-head">
+       <p class="modal-card-title"><i class="fas fa-handshake"></i>Saldar Cuenta</p>
+       <button class="delete" aria-label="close" (click)="onCancel($event)"></button>
+     </header>
+     <section class="modal-card-body">
+       <div class="field">
+         <label class="label">Deuda Total:</label>
+         <div class="control has-icons-left has-icons-right deudatotal">
+
+           <input   [(ngModel)]="deudaParaEditar.cantidad" #cantidad="ngModel"
+           name="cantidad" type="number" class="input deudatotal " disabled
+           value="{{deudaParaEditar.cantidad}}" >
+
+           <span class="icon is-small is-left">
+             <i class="far fa-credit-card"></i>
+           </span>
+           <span class="icon is-small is-right">
+             <i class="fas fa-exclamation-triangle"></i>
+           </span>
+         </div>
+       </div>
+       <div class="field">
+           <label class="label">Abono:</label>
+           <div class="control has-icons-left has-icons-right">
+             <input class="input is-primary" type="number" [(ngModel)]="abono"
+             placeholder="Inserte Cantidad a Abonar" value="" name="abonono">
+             <span class="icon is-small is-left"> <i class="fas fa-donate"></i> </span>
+             <span class="icon is-small is-right"> <i class="fas fa-check"></i></span>
+           </div>
+              <div class="help is-danger" *ngIf="abono < 0"><i class="fas fa-exclamation-circle"></i>No puesdes abonar un numero negativo.</div>
+              <!--<div class="help is-danger" *ngIf="abono > deudaParaEditar.cantidad "><i class="fas fa-exclamation-circle"></i>No puesdes abonar mas del Total.</div>-->
+         </div>
+       <div class="field">
+             <label class="label">Saldo Restante ó Cambio:</label>
+             <div *ngIf="abono<=0 || abono==null" class="control has-icons-left has-icons-right">
+               <input   [(ngModel)]="resto" class="input is-danger" type="number"
+                placeholder="Indefinido" value="Indefinido" disabled>
+               <span class="icon is-small is-left">
+                 <i class="fas fa-donate"></i>
+               </span>
+               <span class="icon is-small is-right">
+                 <i class="fas fa-check"></i>
+               </span>
+             </div>
+
+             <div *ngIf="abono>=1" class="control has-icons-left has-icons-right">
+               <input *ngIf="abono<deudaParaEditar.cantidad"   class="input is-info" type="number"
+                placeholder="" value="{{deudaParaEditar.cantidad - abono}}" disabled>  <!--   -->
+                <input *ngIf="abono>=deudaParaEditar.cantidad"  class="input is-info" type="number"
+                 placeholder="" value="{{abono-deudaParaEditar.cantidad}}" disabled>
+               <span class="icon is-small is-left">
+                 <i class="fas fa-donate"></i>
+               </span>
+               <span class="icon is-small is-right">
+                 <i class="fas fa-check"></i>
+               </span>
+             </div>
+
+           </div>
+     </section>
+     <footer class="modal-card-foot">
+       <div class="divBotones" *ngIf="deudaParaEditar.cantidad >= 1">
+         <button class="button is-disable2" *ngIf="abono <= 0" disabled>Saldar</button>
+         <button class="button is-acciones2"  (click)="onDeleteConfirmer($event)" *ngIf="abono > deudaParaEditar.cantidad" >Saldar</button>
+         <button class="button is-acciones2" (click)="onDeleteConfirmer($event)" id="edit" *ngIf="abono >= 1 && abono <= deudaParaEditar.cantidad">Saldar</button>
+       </div>
+       <div class="divBotones"*ngIf="deudaParaEditar.cantidad == 0">
+         <button class="button is-disable2" (click)="onDeleteConfirmer($event)" *ngIf="abono < 0 || abono >=1 || abono == null" id="edit" disabled>Saldar</button>
+         <button class="button is-acciones2" (click)="onDeleteConfirmer($event)" *ngIf="abono == 0 " id="edit">Saldar</button>
+       </div>
+       <button class="button is-active-cancel" (click)="onCancel($event)" id="dele">Cancelar</button>
+     </footer>
+   </div>
+ </div>

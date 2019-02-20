@@ -37,6 +37,10 @@ editUser(user: UserInterface):void{
     this.usersDoc=this.db.doc<UserInterface>(`users/${user.id}`);
     this.usersDoc.update(user);
 }
+deleteUser(id: string){
+  this.usersDoc=this.db.doc(`users/${id}`);
+  this.usersDoc.delete();
+}
 Auth(name:string){
   if (name===this.root) {
     this.esAdmin=true;
@@ -49,7 +53,7 @@ Reset(){
   this.esAdmin=false;
 }
 getUsersbyId(){
-  
+
 }
 
 }

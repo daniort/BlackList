@@ -15,7 +15,7 @@ export class NavbarComponent implements OnInit {
   admin:string="ADMIN";
   salir:boolean=null;
 
-  root:boolean=null
+  root:boolean=null;
   @Output() public brake = new EventEmitter<void>();
   @Input("iduser") id:string;
   constructor(private  UserService:UserService,
